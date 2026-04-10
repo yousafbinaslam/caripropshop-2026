@@ -50,5 +50,3 @@ class CPS_Public_Templates {
         }
     }
 }
-
-new CPS_Public_Templates();
