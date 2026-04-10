@@ -44,7 +44,7 @@ class CariPropShop_Forms {
         require_once CPS_FORMS_PLUGIN_DIR . 'includes/class-cps-form-storage.php';
 
         $this->form_storage = CPS_Form_Storage::get_instance();
-        $this->form_handler = CPS_Form_Handler::get_instance();
+        $this->form_handler = CPS_Forms_Handler::get_instance();
     }
 
     private function init_hooks() {
@@ -251,6 +251,8 @@ class CariPropShop_Forms {
     }
 
     public static function activate() {
+        require_once CPS_FORMS_PLUGIN_DIR . 'includes/class-cps-form-storage.php';
+        require_once CPS_FORMS_PLUGIN_DIR . 'includes/class-cps-form-handler.php';
         CPS_Form_Storage::get_instance()->create_tables();
         update_option('cps_forms_db_version', CPS_FORMS_DB_VERSION);
         

@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-class CPS_Admin_Settings {
+class CPS_Sliders_Admin_Settings {
 
     const OPTION_NAME = 'cps_plugin_options';
 
@@ -190,4 +190,4 @@ class CPS_Admin_Settings {
     }
 }
 
-new CPS_Admin_Settings();
+new CPS_Sliders_Admin_Settings();

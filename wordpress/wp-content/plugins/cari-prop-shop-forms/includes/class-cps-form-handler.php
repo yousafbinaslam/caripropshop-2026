@@ -3,7 +3,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-class CPS_Form_Handler {
+class CPS_Forms_Handler {
 
     private static $instance = null;
     private $form_storage;
@@ -17,6 +17,7 @@ class CPS_Form_Handler {
 
     private function __construct() {
         $this->form_storage = CPS_Form_Storage::get_instance();
+        $this->form_handler_instance = null;
     }
 
     public function handle_submission($form_type, $form_data) {
