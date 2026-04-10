@@ -1,0 +1,148 @@
+<?php
+/**
+ * Theme Name: CariPropShop
+ * Theme URI: https://caripropshop.com
+ * Description: Custom real estate theme for CariPropShop - WordPress + React integration
+ * Version: 1.0.0
+ * Author: CariPropShop Team
+ * Author URI: https://caripropshop.com
+ * Text Domain: cari-prop-shop
+ * Domain Path: /languages
+ * Requires at least: 6.0
+ * Requires PHP: 8.0
+ */
+
+if (!defined('ABSPATH')) {
+    exit;
+}
+
+define('CPS_THEME_VERSION', '1.0.0');
+define('CPS_THEME_DIR', get_template_directory());
+define('CPS_THEME_URL', get_template_directory_uri());
+
+class CariPropShop_Theme {
+    public function __construct() {
+        add_action('after_setup_theme', array($this, 'setup_theme'));
+        add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
+        add_action('wp_enqueue_scripts', array($this, 'enqueue_styles'));
+        add_action('widgets_init', array($this, 'register_widgets'));
+        add_filter('body_class', array($this, 'body_classes'));
+    }
+
+    public function setup_theme() {
+        load_theme_textdomain('cari-prop-shop', CPS_THEME_DIR . '/languages');
+        
+        add_theme_support('title-tag');
+        add_theme_support('post-thumbnails');
+        add_theme_support('automatic-feed-links');
+        add_theme_support('html5', array('search-form', 'comment-form', 'comment-list', 'gallery', 'caption'));
+        add_theme_support('custom-header', array(
+            'width' => 1920,
+            'height' => 500,
+            'flex-height' => true,
+            'flex-width' => true,
+        ));
+        add_theme_support('custom-logo', array(
+            'height' => 100,
+            'width' => 300,
+            'flex-height' => true,
+            'flex-width' => true,
+        ));
+        add_theme_support('align-wide');
+        add_theme_support('editor-styles');
+        add_theme_support('wp-block-styles');
+
+        register_nav_menus(array(
+            'primary' => __('Primary Menu', 'cari-prop-shop'),
+            'footer' => __('Footer Menu', 'cari-prop-shop'),
+            'mobile' => __('Mobile Menu', 'cari-prop-shop'),
+        ));
+
+        add_image_size('property-thumbnail', 400, 300, true);
+        add_image_size('property-featured', 800, 600, true);
+        add_image_size('agent-avatar', 300, 300, true);
+    }
+
+    public function enqueue_scripts() {
+        wp_enqueue_script('cari-prop-shop-main', CPS_THEME_URL . '/assets/js/main.js', array('jquery'), CPS_THEME_VERSION, true);
+        
+        wp_localize_script('cari-prop-shop-main', 'cpsData', array(
+            'ajaxUrl' => admin_url('admin-ajax.php'),
+            'nonce' => wp_create_nonce('cps_nonce'),
+            'homeUrl' => home_url('/'),
+            'apiUrl' => rest_url('cps/v1/'),
+        ));
+    }
+
+    public function enqueue_styles() {
+        wp_enqueue_style('cari-prop-shop-style', get_stylesheet_uri(), array(), CPS_THEME_VERSION);
+        wp_enqueue_style('cari-prop-shop-blocks', CPS_THEME_URL . '/assets/css/blocks.css', array(), CPS_THEME_VERSION);
+    }
+
+    public function register_widgets() {
+        register_sidebar(array(
+            'name' => __('Main Sidebar', 'cari-prop-shop'),
+            'id' => 'sidebar-main',
+            'description' => __('Add widgets here.', 'cari-prop-shop'),
+            'before_widget' => '<div id="%1$s" class="widget %2$s">',
+            'after_widget' => '</div>',
+            'before_title' => '<h3 class="widget-title">',
+            'after_title' => '</h3>',
+        ));
+
+        register_sidebar(array(
+            'name' => __('Footer Column 1', 'cari-prop-shop'),
+            'id' => 'footer-1',
+            'description' => __('First footer widget area.', 'cari-prop-shop'),
+            'before_widget' => '<div id="%1$s" class="widget %2$s">',
+            'after_widget' => '</div>',
+            'before_title' => '<h4 class="widget-title">',
+            'after_title' => '</h4>',
+        ));
+
+        register_sidebar(array(
+            'name' => __('Footer Column 2', 'cari-prop-shop'),
+            'id' => 'footer-2',
+            'description' => __('Second footer widget area.', 'cari-prop-shop'),
+            'before_widget' => '<div id="%1$s" class="widget %2$s">',
+            'after_widget' => '</div>',
+            'before_title' => '<h4 class="widget-title">',
+            'after_title' => '</h4>',
+        ));
+
+        register_sidebar(array(
+            'name' => __('Footer Column 3', 'cari-prop-shop'),
+            'id' => 'footer-3',
+            'description' => __('Third footer widget area.', 'cari-prop-shop'),
+            'before_widget' => '<div id="%1$s" class="widget %2$s">',
+            'after_widget' => '</div>',
+            'before_title' => '<h4 class="widget-title">',
+            'after_title' => '</h4>',
+        ));
+
+        register_sidebar(array(
+            'name' => __('Footer Column 4', 'cari-prop-shop'),
+            'id' => 'footer-4',
+            'description' => __('Fourth footer widget area.', 'cari-prop-shop'),
+            'before_widget' => '<div id="%1$s" class="widget %2$s">',
+            'after_widget' => '</div>',
+            'before_title' => '<h4 class="widget-title">',
+            'after_title' => '</h4>',
+        ));
+    }
+
+    public function body_classes($classes) {
+        if (is_singular('property')) {
+            $classes[] = 'single-property';
+        }
+        if (is_post_type_archive('property')) {
+            $classes[] = 'archive-property';
+        }
+        return $classes;
+    }
+}
+
+new CariPropShop_Theme();
+
+require_once CPS_THEME_DIR . '/inc/template-functions.php';
+require_once CPS_THEME_DIR . '/inc/customizer.php';

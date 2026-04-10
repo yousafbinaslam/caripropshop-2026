@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+  db:
+    image: mariadb:latest
+    container_name: caripropshop-db
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - caripropshop-network
+
+  wordpress:
+    image: wordpress:latest
+    container_name: caripropshop-wp
+    restart: unless-stopped
+    depends_on:
+      - db
+    env_file: .env
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_NAME: ${MYSQL_DATABASE}
+      WORDPRESS_DB_USER: ${MYSQL_USER}
+      WORDPRESS_DB_PASSWORD: ${MYSQL_PASSWORD}
+      WORDPRESS_TABLE_PREFIX: ${TABLE_PREFIX}
+    ports:
+      - "8080:80"
+    volumes:
+      - wordpress_data:/var/www/html
+      - ./wordpress/wp-content:/var/www/html/wp-content
+    networks:
+      - caripropshop-network
+
+  wordpress-cli:
+    image: wordpress:cli
+    container_name: caripropshop-wp-cli
+    depends_on:
+      - db
+      - wordpress
+    env_file: .env
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_NAME: ${MYSQL_DATABASE}
+      WORDPRESS_DB_USER: ${MYSQL_USER}
+      WORDPRESS_DB_PASSWORD: ${MYSQL_PASSWORD}
+      WORDPRESS_TABLE_PREFIX: ${TABLE_PREFIX}
+    volumes:
+      - wordpress_data:/var/www/html
+    networks:
+      - caripropshop-network
+
+volumes:
+  db_data:
+  wordpress_data:
+
+networks:
+  caripropshop-network:
+    driver: bridge

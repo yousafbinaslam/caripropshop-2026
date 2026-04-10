@@ -1,0 +1,147 @@
+.cps-mail-admin {
+    max-width: 1200px;
+}
+
+.cps-mail-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.cps-mail-stat-box {
+    background: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.cps-mail-stat-box h3 {
+    margin: 0 0 10px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #666666;
+    text-transform: uppercase;
+}
+
+.cps-mail-stat-box .stat-number {
+    margin: 0;
+    font-size: 36px;
+    font-weight: 700;
+    color: #2c3e50;
+}
+
+.cps-mail-quick-actions {
+    display: flex;
+    gap: 15px;
+}
+
+.subscribers-tabs,
+.campaigns-tabs {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #e0e0e0;
+    padding-bottom: 0;
+    list-style: none;
+    padding-left: 0;
+}
+
+.subscribers-tabs li,
+.campaigns-tabs li {
+    margin: 0;
+}
+
+.subscribers-tabs a,
+.campaigns-tabs a {
+    display: block;
+    padding: 10px 20px;
+    color: #666666;
+    text-decoration: none;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: all 0.2s ease;
+}
+
+.subscribers-tabs a:hover,
+.campaigns-tabs a:hover {
+    color: #3498db;
+}
+
+.subscribers-tabs a.active,
+.campaigns-tabs a.active {
+    color: #3498db;
+    border-bottom-color: #3498db;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+.status-badge.status-subscribed {
+    background: #d4edda;
+    color: #155724;
+}
+
+.status-badge.status-pending {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.status-badge.status-unsubscribed {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.status-badge.status-draft {
+    background: #e2e3e5;
+    color: #383d41;
+}
+
+.status-badge.status-sent {
+    background: #d1ecf1;
+    color: #0c5460;
+}
+
+.cps-mail-admin table .button-link {
+    color: #dc3545;
+}
+
+.cps-mail-admin table .button-link:hover {
+    color: #a71d2a;
+}
+
+.cps-mail-admin .tablenav {
+    margin-top: 20px;
+}
+
+.cps-mail-admin .tablenav-pages {
+    font-size: 14px;
+}
+
+.wp-admin .cps-mail-admin .button-primary {
+    background: #3498db;
+    border-color: #2980b9;
+}
+
+.wp-admin .cps-mail-admin .button-primary:hover {
+    background: #2980b9;
+    border-color: #2471a3;
+}
+
+@media (max-width: 768px) {
+    .cps-mail-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .cps-mail-quick-actions {
+        flex-direction: column;
+    }
+}

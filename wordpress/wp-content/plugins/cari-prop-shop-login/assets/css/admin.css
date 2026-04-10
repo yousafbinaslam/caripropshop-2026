@@ -1,0 +1,161 @@
+.cps-admin-settings-page {
+	padding: 20px;
+}
+
+.cps-admin-settings-page .cps-settings-header {
+	margin-bottom: 30px;
+}
+
+.cps-admin-settings-page .cps-settings-header h1 {
+	font-size: 28px;
+	font-weight: 600;
+}
+
+.cps-admin-settings-page .cps-tabs {
+	display: flex;
+	border-bottom: 1px solid #ddd;
+	margin-bottom: 30px;
+}
+
+.cps-admin-settings-page .cps-tab {
+	padding: 12px 20px;
+	cursor: pointer;
+	border: none;
+	background: none;
+	font-size: 14px;
+	color: #666;
+	border-bottom: 2px solid transparent;
+	margin-bottom: -1px;
+	transition: all 0.2s;
+}
+
+.cps-admin-settings-page .cps-tab:hover {
+	color: #0073aa;
+}
+
+.cps-admin-settings-page .cps-tab.active {
+	color: #0073aa;
+	border-bottom-color: #0073aa;
+}
+
+.cps-admin-settings-page .cps-tab-content {
+	display: none;
+}
+
+.cps-admin-settings-page .cps-tab-content.active {
+	display: block;
+}
+
+.cps-admin-settings-page .cps-section {
+	background: #fff;
+	padding: 20px;
+	border: 1px solid #ddd;
+	border-radius: 4px;
+	margin-bottom: 20px;
+}
+
+.cps-admin-settings-page .cps-section h2 {
+	font-size: 18px;
+	margin-bottom: 20px;
+	padding-bottom: 10px;
+	border-bottom: 1px solid #eee;
+}
+
+.cps-admin-settings-page .cps-field {
+	margin-bottom: 20px;
+}
+
+.cps-admin-settings-page .cps-field label {
+	display: block;
+	font-weight: 500;
+	margin-bottom: 8px;
+}
+
+.cps-admin-settings-page .cps-field-description {
+	font-size: 12px;
+	color: #666;
+	margin-top: 4px;
+}
+
+.cps-admin-settings-page input[type="text"],
+.cps-admin-settings-page input[type="password"],
+.cps-admin-settings-page input[type="url"],
+.cps-admin-settings-page input[type="number"],
+.cps-admin-settings-page textarea,
+.cps-admin-settings-page select {
+	width: 100%;
+	max-width: 500px;
+}
+
+.cps-admin-settings-page input[type="checkbox"] {
+	margin-right: 8px;
+}
+
+.cps-admin-settings-page .cps-toggle-group {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.cps-admin-settings-page .cps-toggle {
+	position: relative;
+	width: 44px;
+	height: 24px;
+}
+
+.cps-admin-settings-page .cps-toggle input {
+	opacity: 0;
+	width: 0;
+	height: 0;
+}
+
+.cps-admin-settings-page .cps-toggle-slider {
+	position: absolute;
+	cursor: pointer;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: #ccc;
+	transition: 0.4s;
+	border-radius: 24px;
+}
+
+.cps-admin-settings-page .cps-toggle-slider:before {
+	position: absolute;
+	content: "";
+	height: 18px;
+	width: 18px;
+	left: 3px;
+	bottom: 3px;
+	background-color: white;
+	transition: 0.4s;
+	border-radius: 50%;
+}
+
+.cps-admin-settings-page .cps-toggle input:checked + .cps-toggle-slider {
+	background-color: #0073aa;
+}
+
+.cps-admin-settings-page .cps-toggle input:checked + .cps-toggle-slider:before {
+	transform: translateX(20px);
+}
+
+.cps-admin-settings-page .cps-save-button {
+	margin-top: 20px;
+}
+
+.cps-admin-settings-page .cps-save-button button {
+	background-color: #0073aa;
+	color: #fff;
+	border: none;
+	padding: 10px 20px;
+	border-radius: 4px;
+	cursor: pointer;
+	font-size: 14px;
+	font-weight: 500;
+}
+
+.cps-admin-settings-page .cps-save-button button:hover {
+	background-color: #005177;
+}

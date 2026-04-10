@@ -1,0 +1,450 @@
+.cps-login-form-wrapper,
+.cps-register-form-wrapper,
+.cps-password-reset-wrapper {
+	max-width: 500px;
+	margin: 0 auto;
+	padding: 30px;
+	background: #fff;
+	border-radius: 8px;
+	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+.cps-form-title {
+	font-size: 24px;
+	font-weight: 600;
+	color: #333;
+	margin-bottom: 20px;
+	text-align: center;
+}
+
+.cps-form-description {
+	color: #666;
+	text-align: center;
+	margin-bottom: 20px;
+}
+
+.cps-message {
+	padding: 12px 16px;
+	border-radius: 4px;
+	margin-bottom: 20px;
+	font-size: 14px;
+}
+
+.cps-message-success {
+	background-color: #d4edda;
+	color: #155724;
+	border: 1px solid #c3e6cb;
+}
+
+.cps-message-error {
+	background-color: #f8d7da;
+	color: #721c24;
+	border: 1px solid #f5c6cb;
+}
+
+.cps-message-warning {
+	background-color: #fff3cd;
+	color: #856404;
+	border: 1px solid #ffeeba;
+}
+
+.cps-message-info {
+	background-color: #d1ecf1;
+	color: #0c5460;
+	border: 1px solid #bee5eb;
+}
+
+.cps-form-group {
+	margin-bottom: 20px;
+}
+
+.cps-form-group label {
+	display: block;
+	font-weight: 500;
+	color: #333;
+	margin-bottom: 8px;
+	font-size: 14px;
+}
+
+.cps-form-group .required {
+	color: #dc3545;
+}
+
+.cps-input,
+.cps-select {
+	width: 100%;
+	padding: 12px 16px;
+	border: 1px solid #ddd;
+	border-radius: 4px;
+	font-size: 14px;
+	transition: border-color 0.2s, box-shadow 0.2s;
+	box-sizing: border-box;
+}
+
+.cps-input:focus,
+.cps-select:focus {
+	outline: none;
+	border-color: #0073aa;
+	box-shadow: 0 0 0 3px rgba(0, 115, 170, 0.1);
+}
+
+.cps-input.error,
+.cps-select.error {
+	border-color: #dc3545;
+}
+
+.cps-input.success {
+	border-color: #28a745;
+}
+
+.cps-password-wrapper {
+	position: relative;
+	display: flex;
+	align-items: center;
+}
+
+.cps-password-wrapper .cps-input {
+	padding-right: 40px;
+}
+
+.cps-toggle-password {
+	position: absolute;
+	right: 10px;
+	background: none;
+	border: none;
+	cursor: pointer;
+	color: #666;
+	padding: 5px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.cps-toggle-password:hover {
+	color: #333;
+}
+
+.cps-toggle-password svg {
+	width: 20px;
+	height: 20px;
+}
+
+.cps-form-row {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 20px;
+}
+
+.cps-form-row-2 {
+	display: flex;
+	gap: 15px;
+}
+
+.cps-form-row-2 .cps-form-field {
+	flex: 1;
+}
+
+.cps-checkbox-wrapper {
+	display: flex;
+	align-items: center;
+	cursor: pointer;
+}
+
+.cps-checkbox-wrapper input[type="checkbox"] {
+	width: 16px;
+	height: 16px;
+	margin-right: 8px;
+	cursor: pointer;
+}
+
+.cps-checkbox-label {
+	font-size: 14px;
+	color: #666;
+}
+
+.cps-checkbox-label a {
+	color: #0073aa;
+	text-decoration: none;
+}
+
+.cps-checkbox-label a:hover {
+	text-decoration: underline;
+}
+
+.cps-forgot-password {
+	font-size: 14px;
+	color: #0073aa;
+	text-decoration: none;
+}
+
+.cps-forgot-password:hover {
+	text-decoration: underline;
+}
+
+.cps-submit-btn {
+	width: 100%;
+	padding: 14px 20px;
+	background-color: #0073aa;
+	color: #fff;
+	border: none;
+	border-radius: 4px;
+	font-size: 16px;
+	font-weight: 600;
+	cursor: pointer;
+	transition: background-color 0.2s;
+}
+
+.cps-submit-btn:hover {
+	background-color: #005177;
+}
+
+.cps-submit-btn:disabled {
+	background-color: #ccc;
+	cursor: not-allowed;
+}
+
+.cps-register-link,
+.cps-login-link {
+	text-align: center;
+	margin-top: 20px;
+	font-size: 14px;
+	color: #666;
+}
+
+.cps-register-link a,
+.cps-login-link a {
+	color: #0073aa;
+	text-decoration: none;
+	font-weight: 500;
+}
+
+.cps-register-link a:hover,
+.cps-login-link a:hover {
+	text-decoration: underline;
+}
+
+.cps-back-link {
+	text-align: center;
+	margin-top: 20px;
+}
+
+.cps-back-link a {
+	color: #0073aa;
+	text-decoration: none;
+	font-size: 14px;
+}
+
+.cps-back-link a:hover {
+	text-decoration: underline;
+}
+
+.cps-social-login {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	margin-bottom: 20px;
+}
+
+.cps-social-btn {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 10px;
+	width: 100%;
+	padding: 12px 20px;
+	border: 1px solid #ddd;
+	border-radius: 4px;
+	font-size: 14px;
+	font-weight: 500;
+	cursor: pointer;
+	transition: background-color 0.2s, border-color 0.2s;
+	background-color: #fff;
+	color: #333;
+}
+
+.cps-social-btn:hover {
+	background-color: #f5f5f5;
+}
+
+.cps-social-icon {
+	display: flex;
+	align-items: center;
+}
+
+.cps-social-icon svg {
+	width: 20px;
+	height: 20px;
+}
+
+.cps-facebook-btn {
+	background-color: #1877F2;
+	border-color: #1877F2;
+	color: #fff;
+}
+
+.cps-facebook-btn:hover {
+	background-color: #166fe5;
+}
+
+.cps-google-btn {
+	background-color: #fff;
+}
+
+.cps-apple-btn {
+	background-color: #000;
+	border-color: #000;
+	color: #fff;
+}
+
+.cps-apple-btn:hover {
+	background-color: #333;
+}
+
+.cps-divider {
+	display: flex;
+	align-items: center;
+	margin: 20px 0;
+	color: #999;
+	font-size: 14px;
+}
+
+.cps-divider::before,
+.cps-divider::after {
+	content: '';
+	flex: 1;
+	height: 1px;
+	background-color: #ddd;
+}
+
+.cps-divider span {
+	padding: 0 15px;
+}
+
+.cps-password-strength {
+	margin-top: 8px;
+}
+
+.cps-strength-bar {
+	height: 4px;
+	background-color: #e9ecef;
+	border-radius: 2px;
+	overflow: hidden;
+}
+
+.cps-strength-fill {
+	height: 100%;
+	width: 0;
+	transition: width 0.3s, background-color 0.3s;
+}
+
+.cps-strength-fill.weak {
+	width: 25%;
+	background-color: #dc3545;
+}
+
+.cps-strength-fill.fair {
+	width: 50%;
+	background-color: #ffc107;
+}
+
+.cps-strength-fill.good {
+	width: 75%;
+	background-color: #28a745;
+}
+
+.cps-strength-fill.strong {
+	width: 100%;
+	background-color: #20c997;
+}
+
+.cps-strength-text {
+	font-size: 12px;
+	color: #666;
+	margin-top: 4px;
+	display: block;
+}
+
+.cps-username-message,
+.cps-email-message {
+	font-size: 12px;
+	margin-top: 4px;
+	display: block;
+}
+
+.cps-username-message.available,
+.cps-email-message.available {
+	color: #28a745;
+}
+
+.cps-username-message.taken,
+.cps-email-message.taken {
+	color: #dc3545;
+}
+
+.cps-username-message.validating,
+.cps-email-message.validating {
+	color: #666;
+}
+
+@media (max-width: 600px) {
+	.cps-login-form-wrapper,
+	.cps-register-form-wrapper,
+	.cps-password-reset-wrapper {
+		padding: 20px;
+	}
+
+	.cps-form-row-2 {
+		flex-direction: column;
+		gap: 20px;
+	}
+
+	.cps-form-title {
+		font-size: 20px;
+	}
+}
+
+.cps-admin-settings .nav-tab-wrapper {
+	margin-bottom: 20px;
+}
+
+.cps-admin-settings h3 {
+	margin-top: 30px;
+	margin-bottom: 15px;
+	padding-bottom: 10px;
+	border-bottom: 1px solid #ddd;
+}
+
+.cps-admin-settings .form-table th {
+	width: 200px;
+}
+
+.cps-admin-settings .form-table input[type="text"],
+.cps-admin-settings .form-table input[type="password"],
+.cps-admin-settings .form-table input[type="url"],
+.cps-admin-settings .form-table input[type="number"],
+.cps-admin-settings .form-table textarea,
+.cps-admin-settings .form-table select {
+	width: 100%;
+	max-width: 400px;
+}
+
+.cps-admin-settings .form-table fieldset label {
+	display: block;
+	margin-bottom: 8px;
+}
+
+.cps-admin-settings .description {
+	color: #666;
+	font-size: 13px;
+	margin-top: 4px;
+}
+
+.cps-admin-settings .wp-picker-container {
+	vertical-align: middle;
+}
+
+.cps-admin-settings input[type="checkbox"] {
+	margin-right: 8px;
+}

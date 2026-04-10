@@ -1,0 +1,105 @@
+/* CariPropShop Chat - Frontend Styles */
+
+/* Base widget styles - these are inline in the template but kept here for reference */
+#cps-chat-widget {
+	position: relative;
+	z-index: 9999;
+}
+
+#cps-chat-widget * {
+	box-sizing: border-box;
+}
+
+/* Button animations */
+#cps-chat-toggle {
+	transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+#cps-chat-toggle:hover {
+	box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+#cps-chat-toggle:active {
+	transform: scale(0.95);
+}
+
+/* Message animations */
+.cps-message {
+	animation: cpsMessageIn 0.3s ease;
+}
+
+@keyframes cpsMessageIn {
+	from {
+		opacity: 0;
+		transform: translateY(10px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+/* Send button animation */
+.cps-chat-send:active {
+	transform: scale(0.9);
+}
+
+/* Input focus states */
+.cps-chat-input:focus,
+.cps-chat-user-info input:focus {
+	box-shadow: 0 0 0 2px rgba(74, 144, 217, 0.2);
+}
+
+/* Scrollbar styling */
+.cps-chat-messages::-webkit-scrollbar {
+	width: 6px;
+}
+
+.cps-chat-messages::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+.cps-chat-messages::-webkit-scrollbar-thumb {
+	background: rgba(0, 0, 0, 0.2);
+	border-radius: 3px;
+}
+
+.cps-chat-messages::-webkit-scrollbar-thumb:hover {
+	background: rgba(0, 0, 0, 0.3);
+}
+
+/* Mobile specific adjustments */
+@media (max-width: 480px) {
+	#cps-chat-container {
+		border-radius: 0;
+	}
+}
+
+/* Dark mode support (optional) */
+@media (prefers-color-scheme: dark) {
+	.cps-message.cps-bot,
+	.cps-message.cps-admin {
+		background: #2d2d2d;
+		color: #e0e0e0;
+	}
+
+	.cps-chat-input {
+		background: #2d2d2d;
+		border-color: #444;
+		color: #e0e0e0;
+	}
+
+	.cps-chat-user-info input {
+		background: #2d2d2d;
+		border-color: #444;
+		color: #e0e0e0;
+	}
+
+	.cps-chat-user-info input::placeholder {
+		color: #888;
+	}
+
+	.cps-chat-input::placeholder {
+		color: #888;
+	}
+}

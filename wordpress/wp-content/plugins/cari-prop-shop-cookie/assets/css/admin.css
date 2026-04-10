@@ -1,0 +1,44 @@
+.cps-cookie-admin {
+    max-width: 800px;
+}
+
+.cps-cookie-admin h1 {
+    margin-bottom: 20px;
+}
+
+.cps-cookie-admin table {
+    margin-top: 20px;
+}
+
+.cps-cookie-admin .tablenav {
+    margin-top: 10px;
+}
+
+.cps-cookie-admin .form-table th {
+    width: 200px;
+}
+
+.cps-cookie-admin .color-picker {
+    width: 50px;
+    height: 35px;
+    padding: 2px;
+}
+
+.cps-cookie-admin select,
+.cps-cookie-admin input[type="text"],
+.cps-cookie-admin input[type="url"],
+.cps-cookie-admin input[type="number"] {
+    max-width: 300px;
+}
+
+.cps-cookie-admin .description {
+    color: #646970;
+    font-size: 12px;
+}
+
+@media screen and (max-width: 782px) {
+    .cps-cookie-admin .form-table th {
+        width: auto;
+        padding-bottom: 8px;
+    }
+}
