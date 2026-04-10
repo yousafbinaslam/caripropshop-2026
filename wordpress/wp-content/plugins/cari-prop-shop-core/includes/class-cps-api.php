@@ -95,7 +95,7 @@ class CPS_API {
         // Filter by price range
         if ($min_price = $request->get_param('min_price')) {
             $args['meta_query'][] = array(
-                'key' => 'cps_price',
+                'key' => 'property_price',
                 'value' => intval($min_price),
                 'compare' => '>=',
                 'type' => 'NUMERIC',
@@ -104,7 +104,7 @@ class CPS_API {
 
         if ($max_price = $request->get_param('max_price')) {
             $args['meta_query'][] = array(
-                'key' => 'cps_price',
+                'key' => 'property_price',
                 'value' => intval($max_price),
                 'compare' => '<=',
                 'type' => 'NUMERIC',
@@ -114,7 +114,7 @@ class CPS_API {
         // Filter by bedrooms
         if ($bedrooms = $request->get_param('bedrooms')) {
             $args['meta_query'][] = array(
-                'key' => 'cps_bedrooms',
+                'key' => 'property_bedrooms',
                 'value' => intval($bedrooms),
                 'compare' => '>=',
                 'type' => 'NUMERIC',
@@ -255,22 +255,23 @@ class CPS_API {
             'excerpt' => $post->post_excerpt,
             'featured_image' => get_the_post_thumbnail_url($post->ID, 'large'),
             'thumbnail' => get_the_post_thumbnail_url($post->ID, 'medium'),
-            'price' => get_post_meta($post->ID, 'cps_price', true),
-            'price_label' => get_post_meta($post->ID, 'cps_price_label', true),
-            'area' => get_post_meta($post->ID, 'cps_area', true),
-            'land_area' => get_post_meta($post->ID, 'cps_land_area', true),
-            'bedrooms' => get_post_meta($post->ID, 'cps_bedrooms', true),
-            'bathrooms' => get_post_meta($post->ID, 'cps_bathrooms', true),
-            'garages' => get_post_meta($post->ID, 'cps_garages', true),
-            'year_built' => get_post_meta($post->ID, 'cps_year_built', true),
-            'property_id' => get_post_meta($post->ID, 'cps_property_id', true),
-            'address' => get_post_meta($post->ID, 'cps_address', true),
-            'city' => get_post_meta($post->ID, 'cps_city', true),
-            'state' => get_post_meta($post->ID, 'cps_state', true),
-            'zip' => get_post_meta($post->ID, 'cps_zip', true),
-            'country' => get_post_meta($post->ID, 'cps_country', true),
-            'latitude' => get_post_meta($post->ID, 'cps_latitude', true),
-            'longitude' => get_post_meta($post->ID, 'cps_longitude', true),
+            'price' => get_post_meta($post->ID, 'property_price', true),
+            'price_label' => get_post_meta($post->ID, 'property_price_label', true),
+            'area' => get_post_meta($post->ID, 'property_sqft', true),
+            'land_area' => get_post_meta($post->ID, 'property_land_area', true),
+            'bedrooms' => get_post_meta($post->ID, 'property_bedrooms', true),
+            'bathrooms' => get_post_meta($post->ID, 'property_bathrooms', true),
+            'garages' => get_post_meta($post->ID, 'property_garage', true),
+            'year_built' => get_post_meta($post->ID, 'property_year', true),
+            'property_id' => get_post_meta($post->ID, 'property_listing_id', true),
+            'address' => get_post_meta($post->ID, 'property_address', true),
+            'city' => get_post_meta($post->ID, 'property_city', true),
+            'state' => get_post_meta($post->ID, 'property_state', true),
+            'zip' => get_post_meta($post->ID, 'property_zip', true),
+            'country' => get_post_meta($post->ID, 'property_country', true),
+            'latitude' => get_post_meta($post->ID, 'property_latitude', true),
+            'longitude' => get_post_meta($post->ID, 'property_longitude', true),
+            'status' => get_post_meta($post->ID, 'property_status', true),
             'types' => $types ? array_map(function($t) { return array('id' => $t->term_id, 'name' => $t->name, 'slug' => $t->slug); }, $types) : array(),
             'status' => $status ? array_map(function($s) { return array('id' => $s->term_id, 'name' => $s->name, 'slug' => $s->slug); }, $status) : array(),
             'features' => $features ? array_map(function($f) { return array('id' => $f->term_id, 'name' => $f->name, 'slug' => $f->slug); }, $features) : array(),
