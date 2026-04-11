@@ -83,7 +83,7 @@ class CPS_Public {
 
         if (!empty($_GET['min_price'])) {
             $args['meta_query'][] = array(
-                'key' => 'property_price',
+                'key' => 'cps_price',
                 'value' => intval($_GET['min_price']),
                 'compare' => '>=',
                 'type' => 'NUMERIC',
@@ -92,7 +92,7 @@ class CPS_Public {
 
         if (!empty($_GET['max_price'])) {
             $args['meta_query'][] = array(
-                'key' => 'property_price',
+                'key' => 'cps_price',
                 'value' => intval($_GET['max_price']),
                 'compare' => '<=',
                 'type' => 'NUMERIC',
@@ -101,7 +101,7 @@ class CPS_Public {
 
         if (!empty($_GET['bedrooms'])) {
             $args['meta_query'][] = array(
-                'key' => 'property_bedrooms',
+                'key' => 'cps_bedrooms',
                 'value' => intval($_GET['bedrooms']),
                 'compare' => '>=',
                 'type' => 'NUMERIC',
@@ -115,14 +115,14 @@ class CPS_Public {
             $properties[] = array(
                 'id' => $post->ID,
                 'title' => $post->post_title,
-                'price' => get_post_meta($post->ID, 'property_price', true),
-                'price_numeric' => get_post_meta($post->ID, 'property_price', true),
-                'address' => get_post_meta($post->ID, 'property_address', true),
-                'bedrooms' => get_post_meta($post->ID, 'property_bedrooms', true),
-                'bathrooms' => get_post_meta($post->ID, 'property_bathrooms', true),
-                'sqft' => get_post_meta($post->ID, 'property_sqft', true),
-                'lat' => get_post_meta($post->ID, 'property_latitude', true),
-                'lng' => get_post_meta($post->ID, 'property_longitude', true),
+                'price' => get_post_meta($post->ID, 'cps_price', true),
+                'price_numeric' => get_post_meta($post->ID, 'cps_price', true),
+                'address' => get_post_meta($post->ID, 'cps_address', true),
+                'bedrooms' => get_post_meta($post->ID, 'cps_bedrooms', true),
+                'bathrooms' => get_post_meta($post->ID, 'cps_bathrooms', true),
+                'sqft' => get_post_meta($post->ID, 'cps_sqft', true),
+                'lat' => get_post_meta($post->ID, 'cps_latitude', true),
+                'lng' => get_post_meta($post->ID, 'cps_longitude', true),
                 'image' => get_the_post_thumbnail_url($post->ID, 'medium'),
                 'permalink' => get_permalink($post->ID),
                 'status' => $this->get_property_status_slug($post->ID),
@@ -366,13 +366,13 @@ class CPS_Public {
                 $properties[] = array(
                     'id' => $post->ID,
                     'title' => $post->post_title,
-                    'price' => get_post_meta($post->ID, 'property_price', true),
+                    'price' => get_post_meta($post->ID, 'cps_price', true),
                     'image' => get_the_post_thumbnail_url($post->ID, 'medium'),
                     'permalink' => get_permalink($post->ID),
-                    'bedrooms' => get_post_meta($post->ID, 'property_bedrooms', true),
-                    'bathrooms' => get_post_meta($post->ID, 'property_bathrooms', true),
-                    'sqft' => get_post_meta($post->ID, 'property_sqft', true),
-                    'address' => get_post_meta($post->ID, 'property_address', true),
+                    'bedrooms' => get_post_meta($post->ID, 'cps_bedrooms', true),
+                    'bathrooms' => get_post_meta($post->ID, 'cps_bathrooms', true),
+                    'sqft' => get_post_meta($post->ID, 'cps_sqft', true),
+                    'address' => get_post_meta($post->ID, 'cps_address', true),
                 );
             }
         }
