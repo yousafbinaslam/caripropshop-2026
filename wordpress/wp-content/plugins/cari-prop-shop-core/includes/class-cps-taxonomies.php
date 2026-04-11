@@ -21,6 +21,7 @@ class CPS_Taxonomies {
         $this->register_property_status_taxonomy();
         $this->register_property_location_taxonomy();
         $this->register_property_feature_taxonomy();
+        $this->register_property_currency_taxonomy();
     }
 
     /**
@@ -58,7 +59,7 @@ class CPS_Taxonomies {
             'show_ui'            => true,
             'show_admin_column'  => true,
             'show_in_nav_menus'  => true,
-            'show_tagcloud'      => true,
+            'show_tagcloud'       => true,
             'show_in_rest'       => true,
             'query_var'          => true,
             'rewrite'            => array(
@@ -70,7 +71,7 @@ class CPS_Taxonomies {
         
         register_taxonomy('property_type', array('property'), $args);
         
-        // Register default property types
+        // Register default property types (11 types from Houzez)
         $default_types = array(
             'studio' => 'Studio',
             'apartment' => 'Apartment',
@@ -82,7 +83,7 @@ class CPS_Taxonomies {
             'lot' => 'Lot',
             'multi-family-home' => 'Multi Family Home',
             'commercial' => 'Commercial',
-            'industrial' => 'Industrial',
+            'residential' => 'Residential',
         );
         
         foreach ($default_types as $slug => $name) {
@@ -111,7 +112,7 @@ class CPS_Taxonomies {
             'view_item'                  => __('View Status', 'cari-prop-shop'),
             'separate_items_with_commas' => __('Separate status with commas', 'cari-prop-shop'),
             'add_or_remove_items'        => __('Add or remove status', 'cari-prop-shop'),
-            'choose_from_most_used'      => __('Choose from the most used', 'cari-prop-shop'),
+            'choose_from_most_used'       => __('Choose from the most used', 'cari-prop-shop'),
             'popular_items'              => __('Popular Status', 'cari-prop-shop'),
             'search_items'               => __('Search Status', 'cari-prop-shop'),
             'not_found'                  => __('Not Found', 'cari-prop-shop'),
@@ -127,7 +128,7 @@ class CPS_Taxonomies {
             'show_ui'            => true,
             'show_admin_column'  => true,
             'show_in_nav_menus'  => true,
-            'show_tagcloud'      => true,
+            'show_tagcloud'       => true,
             'show_in_rest'       => true,
             'query_var'          => true,
             'rewrite'            => array(
@@ -139,10 +140,16 @@ class CPS_Taxonomies {
         
         register_taxonomy('property_status', array('property'), $args);
         
-        // Register default status
+        // Register default status (from Houzez)
         $default_status = array(
             'for-sale' => 'For Sale',
             'for-rent' => 'For Rent',
+            'foreclosures' => 'Foreclosures',
+            'new-construction' => 'New Construction',
+            'new-listing' => 'New Listing',
+            'open-house' => 'Open House',
+            'reduced-price' => 'Reduced Price',
+            'resale' => 'Resale',
             'sold' => 'Sold',
             'leased' => 'Leased',
             'pending' => 'Pending',
@@ -157,7 +164,7 @@ class CPS_Taxonomies {
     }
 
     /**
-     * Register Property Location taxonomy
+     * Register Property Location taxonomy (Indonesian Cities)
      */
     private function register_property_location_taxonomy() {
         $labels = array(
@@ -175,7 +182,7 @@ class CPS_Taxonomies {
             'view_item'                  => __('View Location', 'cari-prop-shop'),
             'separate_items_with_commas' => __('Separate locations with commas', 'cari-prop-shop'),
             'add_or_remove_items'        => __('Add or remove locations', 'cari-prop-shop'),
-            'choose_from_most_used'      => __('Choose from the most used', 'cari-prop-shop'),
+            'choose_from_most_used'       => __('Choose from the most used', 'cari-prop-shop'),
             'popular_items'              => __('Popular Locations', 'cari-prop-shop'),
             'search_items'               => __('Search Locations', 'cari-prop-shop'),
             'not_found'                  => __('Not Found', 'cari-prop-shop'),
@@ -191,7 +198,7 @@ class CPS_Taxonomies {
             'show_ui'            => true,
             'show_admin_column'  => true,
             'show_in_nav_menus'  => true,
-            'show_tagcloud'      => true,
+            'show_tagcloud'       => true,
             'show_in_rest'       => true,
             'query_var'          => true,
             'rewrite'            => array(
@@ -202,10 +209,30 @@ class CPS_Taxonomies {
         );
         
         register_taxonomy('property_location', array('property'), $args);
+        
+        // Register default locations (Indonesian cities from Houzez)
+        $default_locations = array(
+            'aceh' => 'Aceh',
+            'bali' => 'Bali',
+            'bangka-belitung' => 'Bangka Belitung Islands',
+            'bengkulu' => 'Bengkulu',
+            'jambi' => 'Jambi',
+            'north-sumatra' => 'North Sumatra',
+            'riau' => 'Riau',
+            'riau-islands' => 'Riau Islands',
+            'south-sumatra' => 'South Sumatra',
+            'west-sumatra' => 'West Sumatra',
+        );
+        
+        foreach ($default_locations as $slug => $name) {
+            if (!term_exists($name, 'property_location')) {
+                wp_insert_term($name, 'property_location', array('slug' => $slug));
+            }
+        }
     }
 
     /**
-     * Register Property Feature taxonomy
+     * Register Property Feature taxonomy (30+ amenities from Houzez)
      */
     private function register_property_feature_taxonomy() {
         $labels = array(
@@ -223,7 +250,7 @@ class CPS_Taxonomies {
             'view_item'                  => __('View Feature', 'cari-prop-shop'),
             'separate_items_with_commas' => __('Separate features with commas', 'cari-prop-shop'),
             'add_or_remove_items'        => __('Add or remove features', 'cari-prop-shop'),
-            'choose_from_most_used'      => __('Choose from the most used', 'cari-prop-shop'),
+            'choose_from_most_used'       => __('Choose from the most used', 'cari-prop-shop'),
             'popular_items'              => __('Popular Features', 'cari-prop-shop'),
             'search_items'               => __('Search Features', 'cari-prop-shop'),
             'not_found'                  => __('Not Found', 'cari-prop-shop'),
@@ -239,7 +266,7 @@ class CPS_Taxonomies {
             'show_ui'            => true,
             'show_admin_column'  => true,
             'show_in_nav_menus'  => true,
-            'show_tagcloud'      => true,
+            'show_tagcloud'       => true,
             'show_in_rest'       => true,
             'query_var'          => true,
             'rewrite'            => array(
@@ -251,23 +278,93 @@ class CPS_Taxonomies {
         
         register_taxonomy('property_feature', array('property'), $args);
         
-        // Register default features
+        // Register all features from Houzez (32 features)
         $default_features = array(
             'air-conditioning' => 'Air Conditioning',
-            'swimming-pool' => 'Swimming Pool',
-            'gym' => 'Gym',
-            'parking' => 'Parking',
-            'garden' => 'Garden',
-            'security' => 'Security System',
-            'wifi' => 'WiFi',
             'balcony' => 'Balcony',
-            'furnished' => 'Furnished',
-            'pet-friendly' => 'Pet Friendly',
+            'barbeque' => 'Barbeque',
+            'compact-kitchen' => 'Compact Kitchen',
+            'dryer' => 'Dryer',
+            'elevator' => 'Elevator',
+            'energy-efficient-lighting' => 'Energy Efficient Lighting',
+            'facilities-convenience' => 'Facilities & Convenience',
+            'fireplace' => 'Fireplace',
+            'garage' => 'Garage',
+            'gym' => 'Gym',
+            'interior-features' => 'Interior Features',
+            'laundry' => 'Laundry',
+            'lawn' => 'Lawn',
+            'microwave' => 'Microwave',
+            'mini-oven' => 'Mini Oven',
+            'outdoor-leisure' => 'Outdoor & Leisure',
+            'outdoor-shower' => 'Outdoor Shower',
+            'patio' => 'Patio',
+            'refrigerator' => 'Refrigerator',
+            'sauna' => 'Sauna',
+            'security-system' => 'Security System',
+            'smart-lock' => 'Smart Lock',
+            'solar-panels' => 'Solar Panels',
+            'soundproof-walls' => 'Soundproof Walls',
+            'swimming-pool' => 'Swimming Pool',
+            'technology-efficiency' => 'Technology & Efficiency',
+            'tv-cable' => 'TV Cable',
+            'washer' => 'Washer',
+            'wifi' => 'WiFi',
+            'window-coverings' => 'Window Coverings',
+            'work-desk' => 'Work Desk',
         );
         
         foreach ($default_features as $slug => $name) {
             if (!term_exists($name, 'property_feature')) {
                 wp_insert_term($name, 'property_feature', array('slug' => $slug));
+            }
+        }
+    }
+
+    /**
+     * Register Currency taxonomy
+     */
+    private function register_property_currency_taxonomy() {
+        $labels = array(
+            'name'                       => _x('Currencies', 'Taxonomy General Name', 'cari-prop-shop'),
+            'singular_name'              => _x('Currency', 'Taxonomy Singular Name', 'cari-prop-shop'),
+            'menu_name'                  => __('Currencies', 'cari-prop-shop'),
+            'all_items'                  => __('All Currencies', 'cari-prop-shop'),
+            'edit_item'                  => __('Edit Currency', 'cari-prop-shop'),
+            'update_item'                => __('Update Currency', 'cari-prop-shop'),
+            'add_new_item'               => __('Add New Currency', 'cari-prop-shop'),
+            'new_item_name'              => __('New Currency Name', 'cari-prop-shop'),
+            'view_item'                  => __('View Currency', 'cari-prop-shop'),
+            'separate_items_with_commas' => __('Separate currencies with commas', 'cari-prop-shop'),
+            'add_or_remove_items'        => __('Add or remove currencies', 'cari-prop-shop'),
+            'choose_from_most_used'       => __('Choose from the most used', 'cari-prop-shop'),
+            'not_found'                  => __('Not Found', 'cari-prop-shop'),
+        );
+        
+        $args = array(
+            'labels'             => $labels,
+            'hierarchical'       => true,
+            'public'             => true,
+            'show_ui'            => true,
+            'show_admin_column'  => true,
+            'show_in_rest'       => true,
+            'query_var'          => true,
+            'rewrite'            => array('slug' => 'currency'),
+        );
+        
+        register_taxonomy('property_currency', array('property'), $args);
+        
+        // Default currencies
+        $default_currencies = array(
+            'idr' => 'IDR',
+            'usd' => 'USD',
+            'eur' => 'EUR',
+            'sgd' => 'SGD',
+        );
+        
+        foreach ($default_currencies as $slug => $name) {
+            if (!term_exists($name, 'property_currency')) {
+                wp_insert_term($name, 'property_currency', array('slug' => $slug));
             }
         }
     }

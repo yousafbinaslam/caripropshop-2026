@@ -44,8 +44,13 @@ class CPS_Forms_Handler {
     private function validate_form($form_type, $form_data) {
         $errors = new WP_Error();
         $fields = $this->get_form_fields($form_type);
+        $form_settings = $this->get_form_settings($form_type);
 
         foreach ($fields as $field) {
+            if (!$this->is_field_visible($field, $form_data, $form_settings)) {
+                continue;
+            }
+
             if (!empty($field['required'])) {
                 $value = isset($form_data[$field['name']]) ? $form_data[$field['name']] : '';
                 
@@ -67,6 +72,20 @@ class CPS_Forms_Handler {
                     $errors->add('invalid_phone', 'Please enter a valid phone number.', $field['name']);
                 }
             }
+
+            if (!empty($field['min_length'])) {
+                $value = isset($form_data[$field['name']]) ? $form_data[$field['name']] : '';
+                if (!empty($value) && strlen($value) < $field['min_length']) {
+                    $errors->add('min_length', $field['label'] . ' must be at least ' . $field['min_length'] . ' characters.', $field['name']);
+                }
+            }
+
+            if (!empty($field['max_length'])) {
+                $value = isset($form_data[$field['name']]) ? $form_data[$field['name']] : '';
+                if (!empty($value) && strlen($value) > $field['max_length']) {
+                    $errors->add('max_length', $field['label'] . ' must not exceed ' . $field['max_length'] . ' characters.', $field['name']);
+                }
+            }
         }
 
         $recaptcha_enabled = $this->is_recaptcha_enabled();
@@ -84,6 +103,62 @@ class CPS_Forms_Handler {
         return true;
     }
 
+    private function is_field_visible($field, $form_data, $form_settings) {
+        if (empty($field['conditions'])) {
+            return true;
+        }
+
+        $conditions = $field['conditions'];
+        $logic = !empty($field['condition_logic']) ? $field['condition_logic'] : 'and';
+
+        foreach ($conditions as $condition) {
+            $field_value = isset($form_data[$condition['field']]) ? $form_data[$condition['field']] : '';
+            $condition_value = $condition['value'];
+            $operator = $condition['operator'];
+
+            $matches = false;
+            switch ($operator) {
+                case 'equals':
+                    $matches = $field_value === $condition_value;
+                    break;
+                case 'not_equals':
+                    $matches = $field_value !== $condition_value;
+                    break;
+                case 'contains':
+                    $matches = stripos($field_value, $condition_value) !== false;
+                    break;
+                case 'not_contains':
+                    $matches = stripos($field_value, $condition_value) === false;
+                    break;
+                case 'greater_than':
+                    $matches = floatval($field_value) > floatval($condition_value);
+                    break;
+                case 'less_than':
+                    $matches = floatval($field_value) < floatval($condition_value);
+                    break;
+                case 'is_empty':
+                    $matches = empty($field_value);
+                    break;
+                case 'is_not_empty':
+                    $matches = !empty($field_value);
+                    break;
+            }
+
+            if ($logic === 'and' && !$matches) {
+                return false;
+            } elseif ($logic === 'or' && $matches) {
+                return true;
+            }
+        }
+
+        return $logic === 'and' ? true : false;
+    }
+
+    private function get_form_settings($form_type) {
+        $all_settings = get_option('cps_forms_custom_settings', array());
+        return isset($all_settings[$form_type]) ? $all_settings[$form_type] : array();
+    }
+
     private function get_form_fields($form_type) {
         $forms = array(
             'contact' => array(
@@ -92,44 +167,148 @@ class CPS_Forms_Handler {
                 array('name' => 'email', 'label' => 'Email', 'type' => 'email', 'required' => true),
                 array('name' => 'phone', 'label' => 'Phone', 'type' => 'tel', 'required' => false),
                 array('name' => 'subject', 'label' => 'Subject', 'required' => false),
-                array('name' => 'message', 'label' => 'Message', 'required' => true),
+                array('name' => 'message', 'label' => 'Message', 'required' => true, 'type' => 'textarea'),
             ),
             'property_inquiry' => array(
                 array('name' => 'first_name', 'label' => 'First Name', 'required' => true),
                 array('name' => 'last_name', 'label' => 'Last Name', 'required' => true),
                 array('name' => 'email', 'label' => 'Email', 'type' => 'email', 'required' => true),
                 array('name' => 'phone', 'label' => 'Phone', 'type' => 'tel', 'required' => true),
-                array('name' => 'property_id', 'label' => 'Property ID', 'required' => false),
-                array('name' => 'inquiry_type', 'label' => 'Inquiry Type', 'required' => true),
-                array('name' => 'message', 'label' => 'Message', 'required' => false),
+                array('name' => 'property_id', 'label' => 'Property ID', 'type' => 'hidden', 'required' => false),
+                array(
+                    'name' => 'inquiry_type',
+                    'label' => 'Inquiry Type',
+                    'type' => 'select',
+                    'required' => true,
+                    'options' => array(
+                        '' => 'Select an option',
+                        'schedule_viewing' => 'Schedule a Viewing',
+                        'request_info' => 'Request More Information',
+                        'make_offer' => 'Make an Offer',
+                        'ask_question' => 'Ask a Question',
+                        'other' => 'Other'
+                    )
+                ),
+                array(
+                    'name' => 'financing',
+                    'label' => 'Need Financing?',
+                    'type' => 'radio',
+                    'options' => array(
+                        'yes' => 'Yes',
+                        'no' => 'No',
+                        'unsure' => 'Not Sure'
+                    ),
+                    'conditions' => array(
+                        array('field' => 'inquiry_type', 'operator' => 'equals', 'value' => 'make_offer')
+                    )
+                ),
+                array('name' => 'message', 'label' => 'Message', 'type' => 'textarea', 'required' => false),
             ),
             'general_inquiry' => array(
                 array('name' => 'first_name', 'label' => 'First Name', 'required' => true),
                 array('name' => 'last_name', 'label' => 'Last Name', 'required' => true),
                 array('name' => 'email', 'label' => 'Email', 'type' => 'email', 'required' => true),
                 array('name' => 'phone', 'label' => 'Phone', 'type' => 'tel', 'required' => false),
-                array('name' => 'inquiry_type', 'label' => 'Inquiry Type', 'required' => true),
-                array('name' => 'message', 'label' => 'Message', 'required' => true),
+                array(
+                    'name' => 'inquiry_type',
+                    'label' => 'Inquiry Type',
+                    'type' => 'select',
+                    'required' => true,
+                    'options' => array(
+                        '' => 'Select a topic',
+                        'buying' => 'Buying a Property',
+                        'selling' => 'Selling a Property',
+                        'renting' => 'Renting',
+                        'investment' => 'Investment Opportunities',
+                        'agent' => 'Become an Agent',
+                        'partnership' => 'Partnership',
+                        'other' => 'Other'
+                    )
+                ),
+                array('name' => 'budget_range', 'label' => 'Budget Range', 'type' => 'select', 'options' => array(
+                    '' => 'Select budget',
+                    'under_500m' => 'Under Rp 500 Million',
+                    '500m_1b' => 'Rp 500 Million - 1 Billion',
+                    '1b_5b' => 'Rp 1 - 5 Billion',
+                    '5b_10b' => 'Rp 5 - 10 Billion',
+                    'above_10b' => 'Above Rp 10 Billion',
+                )),
+                array('name' => 'message', 'label' => 'Message', 'type' => 'textarea', 'required' => true),
             ),
             'schedule_viewing' => array(
                 array('name' => 'first_name', 'label' => 'First Name', 'required' => true),
                 array('name' => 'last_name', 'label' => 'Last Name', 'required' => true),
                 array('name' => 'email', 'label' => 'Email', 'type' => 'email', 'required' => true),
                 array('name' => 'phone', 'label' => 'Phone', 'type' => 'tel', 'required' => true),
-                array('name' => 'property_id', 'label' => 'Property ID', 'required' => false),
-                array('name' => 'preferred_date', 'label' => 'Preferred Date', 'required' => true),
-                array('name' => 'preferred_time', 'label' => 'Preferred Time', 'required' => true),
-                array('name' => 'message', 'label' => 'Additional Notes', 'required' => false),
+                array('name' => 'property_id', 'label' => 'Property ID', 'type' => 'hidden', 'required' => false),
+                array('name' => 'preferred_date', 'label' => 'Preferred Date', 'type' => 'date', 'required' => true),
+                array('name' => 'preferred_time', 'label' => 'Preferred Time', 'type' => 'time', 'required' => true),
+                array('name' => 'viewing_type', 'label' => 'Viewing Type', 'type' => 'radio', 'options' => array(
+                    'in_person' => 'In Person',
+                    'virtual' => 'Virtual Tour',
+                    'both' => 'Either'
+                )),
+                array('name' => 'message', 'label' => 'Additional Notes', 'type' => 'textarea', 'required' => false),
             ),
             'mortgage_calculator' => array(
                 array('name' => 'first_name', 'label' => 'First Name', 'required' => true),
                 array('name' => 'last_name', 'label' => 'Last Name', 'required' => true),
                 array('name' => 'email', 'label' => 'Email', 'type' => 'email', 'required' => true),
                 array('name' => 'phone', 'label' => 'Phone', 'type' => 'tel', 'required' => false),
-                array('name' => 'property_price', 'label' => 'Property Price', 'required' => true),
-                array('name' => 'down_payment', 'label' => 'Down Payment', 'required' => true),
-                array('name' => 'loan_term', 'label' => 'Loan Term', 'required' => true),
-                array('name' => 'interest_rate', 'label' => 'Interest Rate', 'required' => false),
+                array('name' => 'property_price', 'label' => 'Property Price (IDR)', 'type' => 'number', 'required' => true, 'min' => 0),
+                array('name' => 'down_payment', 'label' => 'Down Payment (%)', 'type' => 'number', 'required' => true, 'min' => 5, 'max' => 95),
+                array('name' => 'loan_term', 'label' => 'Loan Term (Years)', 'type' => 'select', 'required' => true, 'options' => array(
+                    '5' => '5 Years',
+                    '10' => '10 Years',
+                    '15' => '15 Years',
+                    '20' => '20 Years',
+                    '25' => '25 Years',
+                    '30' => '30 Years'
+                )),
+                array('name' => 'interest_rate', 'label' => 'Interest Rate (%)', 'type' => 'number', 'min' => 0, 'max' => 30, 'step' => 0.1),
+                array('name' => 'contact_mortgage', 'label' => 'I would like to be contacted by a mortgage specialist', 'type' => 'checkbox'),
+            ),
+            'service_request' => array(
+                array('name' => 'first_name', 'label' => 'First Name', 'required' => true),
+                array('name' => 'last_name', 'label' => 'Last Name', 'required' => true),
+                array('name' => 'email', 'label' => 'Email', 'type' => 'email', 'required' => true),
+                array('name' => 'phone', 'label' => 'Phone', 'type' => 'tel', 'required' => true),
+                array('name' => 'property_address', 'label' => 'Property Address', 'type' => 'textarea', 'required' => false),
+                array(
+                    'name' => 'service_type',
+                    'label' => 'Service Type',
+                    'type' => 'select',
+                    'required' => true,
+                    'options' => array(
+                        '' => 'Select a service',
+                        'notary' => 'Notary Services',
+                        'interior' => 'Interior Design',
+                        'construction' => 'Construction',
+                        'legal' => 'Legal Services',
+                        'appraisal' => 'Property Appraisal',
+                        'management' => 'Property Management'
+                    )
+                ),
+                array(
+                    'name' => 'property_type',
+                    'label' => 'Property Type',
+                    'type' => 'checkbox_group',
+                    'options' => array(
+                        'house' => 'House',
+                        'apartment' => 'Apartment',
+                        'land' => 'Land',
+                        'commercial' => 'Commercial'
+                    ),
+                    'conditions' => array(
+                        array('field' => 'service_type', 'operator' => 'not_equals', 'value' => '')
+                    )
+                ),
+                array('name' => 'preferred_contact', 'label' => 'Preferred Contact Method', 'type' => 'radio', 'options' => array(
+                    'email' => 'Email',
+                    'phone' => 'Phone Call',
+                    'whatsapp' => 'WhatsApp'
+                )),
+                array('name' => 'message', 'label' => 'Project Details', 'type' => 'textarea', 'required' => true),
             ),
         );
 

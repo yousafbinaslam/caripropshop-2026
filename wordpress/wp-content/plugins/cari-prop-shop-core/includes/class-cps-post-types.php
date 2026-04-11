@@ -20,6 +20,9 @@ class CPS_Post_Types {
         $this->register_property_post_type();
         $this->register_agent_post_type();
         $this->register_agency_post_type();
+        $this->register_developer_post_type();
+        $this->register_project_post_type();
+        $this->register_neighborhood_post_type();
     }
 
     /**
@@ -213,5 +216,170 @@ class CPS_Post_Types {
         );
         
         register_post_type('agency', $args);
+    }
+
+    /**
+     * Register Developer post type
+     */
+    private function register_developer_post_type() {
+        $labels = array(
+            'name'                  => _x('Developers', 'Post Type General Name', 'cari-prop-shop'),
+            'singular_name'         => _x('Developer', 'Post Type Singular Name', 'cari-prop-shop'),
+            'menu_name'             => __('Developers', 'cari-prop-shop'),
+            'name_admin_bar'        => __('Developer', 'cari-prop-shop'),
+            'archives'              => __('Developer Archives', 'cari-prop-shop'),
+            'attributes'            => __('Developer Attributes', 'cari-prop-shop'),
+            'all_items'             => __('All Developers', 'cari-prop-shop'),
+            'add_new_item'          => __('Add New Developer', 'cari-prop-shop'),
+            'add_new'               => __('Add New', 'cari-prop-shop'),
+            'new_item'              => __('New Developer', 'cari-prop-shop'),
+            'edit_item'             => __('Edit Developer', 'cari-prop-shop'),
+            'update_item'           => __('Update Developer', 'cari-prop-shop'),
+            'view_item'             => __('View Developer', 'cari-prop-shop'),
+            'search_items'          => __('Search Developer', 'cari-prop-shop'),
+            'not_found'             => __('Not found', 'cari-prop-shop'),
+            'not_found_in_trash'    => __('Not found in Trash', 'cari-prop-shop'),
+            'featured_image'        => __('Logo', 'cari-prop-shop'),
+            'set_featured_image'    => __('Set logo', 'cari-prop-shop'),
+            'remove_featured_image' => __('Remove logo', 'cari-prop-shop'),
+            'use_featured_image'    => __('Use as logo', 'cari-prop-shop'),
+        );
+
+        $args = array(
+            'label'               => __('Developer', 'cari-prop-shop'),
+            'description'          => __('Property developers and builders', 'cari-prop-shop'),
+            'labels'              => $labels,
+            'supports'            => array('title', 'editor', 'thumbnail', 'custom-fields'),
+            'hierarchical'        => false,
+            'public'              => true,
+            'show_ui'             => true,
+            'show_in_menu'        => true,
+            'menu_position'       => 8,
+            'menu_icon'           => 'dashicons-admin-home',
+            'show_in_admin_bar'   => true,
+            'show_in_nav_menus'   => true,
+            'can_export'          => true,
+            'has_archive'         => true,
+            'exclude_from_search' => false,
+            'publicly_queryable'  => true,
+            'capability_type'     => 'post',
+            'show_in_rest'        => true,
+            'rewrite'             => array(
+                'slug'       => 'developer',
+                'with_front' => true,
+            ),
+        );
+
+        register_post_type('developer', $args);
+    }
+
+    /**
+     * Register Project post type (new developments)
+     */
+    private function register_project_post_type() {
+        $labels = array(
+            'name'                  => _x('Projects', 'Post Type General Name', 'cari-prop-shop'),
+            'singular_name'         => _x('Project', 'Post Type Singular Name', 'cari-prop-shop'),
+            'menu_name'             => __('Projects', 'cari-prop-shop'),
+            'name_admin_bar'        => __('Project', 'cari-prop-shop'),
+            'archives'              => __('Project Archives', 'cari-prop-shop'),
+            'attributes'            => __('Project Attributes', 'cari-prop-shop'),
+            'all_items'             => __('All Projects', 'cari-prop-shop'),
+            'add_new_item'          => __('Add New Project', 'cari-prop-shop'),
+            'add_new'               => __('Add New', 'cari-prop-shop'),
+            'new_item'              => __('New Project', 'cari-prop-shop'),
+            'edit_item'             => __('Edit Project', 'cari-prop-shop'),
+            'update_item'           => __('Update Project', 'cari-prop-shop'),
+            'view_item'             => __('View Project', 'cari-prop-shop'),
+            'search_items'          => __('Search Project', 'cari-prop-shop'),
+            'not_found'             => __('Not found', 'cari-prop-shop'),
+            'not_found_in_trash'    => __('Not found in Trash', 'cari-prop-shop'),
+            'featured_image'        => __('Project Image', 'cari-prop-shop'),
+            'set_featured_image'    => __('Set project image', 'cari-prop-shop'),
+            'remove_featured_image' => __('Remove project image', 'cari-prop-shop'),
+            'use_featured_image'    => __('Use as project image', 'cari-prop-shop'),
+        );
+
+        $args = array(
+            'label'               => __('Project', 'cari-prop-shop'),
+            'description'          => __('New property developments and projects', 'cari-prop-shop'),
+            'labels'              => $labels,
+            'supports'            => array('title', 'editor', 'thumbnail', 'excerpt', 'custom-fields', 'gallery'),
+            'hierarchical'        => false,
+            'public'              => true,
+            'show_ui'             => true,
+            'show_in_menu'        => true,
+            'menu_position'       => 9,
+            'menu_icon'           => 'dashicons-layout',
+            'show_in_admin_bar'   => true,
+            'show_in_nav_menus'   => true,
+            'can_export'          => true,
+            'has_archive'         => true,
+            'exclude_from_search' => false,
+            'publicly_queryable'  => true,
+            'capability_type'     => 'post',
+            'show_in_rest'        => true,
+            'rewrite'             => array(
+                'slug'       => 'project',
+                'with_front' => true,
+            ),
+        );
+
+        register_post_type('project', $args);
+    }
+
+    /**
+     * Register Neighborhood post type
+     */
+    private function register_neighborhood_post_type() {
+        $labels = array(
+            'name'                  => _x('Neighborhoods', 'Post Type General Name', 'cari-prop-shop'),
+            'singular_name'         => _x('Neighborhood', 'Post Type Singular Name', 'cari-prop-shop'),
+            'menu_name'             => __('Neighborhoods', 'cari-prop-shop'),
+            'name_admin_bar'        => __('Neighborhood', 'cari-prop-shop'),
+            'archives'              => __('Neighborhood Archives', 'cari-prop-shop'),
+            'attributes'            => __('Neighborhood Attributes', 'cari-prop-shop'),
+            'all_items'             => __('All Neighborhoods', 'cari-prop-shop'),
+            'add_new_item'          => __('Add New Neighborhood', 'cari-prop-shop'),
+            'add_new'               => __('Add New', 'cari-prop-shop'),
+            'new_item'              => __('New Neighborhood', 'cari-prop-shop'),
+            'edit_item'             => __('Edit Neighborhood', 'cari-prop-shop'),
+            'update_item'           => __('Update Neighborhood', 'cari-prop-shop'),
+            'view_item'             => __('View Neighborhood', 'cari-prop-shop'),
+            'search_items'          => __('Search Neighborhood', 'cari-prop-shop'),
+            'not_found'             => __('Not found', 'cari-prop-shop'),
+            'not_found_in_trash'    => __('Not found in Trash', 'cari-prop-shop'),
+            'featured_image'        => __('Cover Image', 'cari-prop-shop'),
+            'set_featured_image'    => __('Set cover image', 'cari-prop-shop'),
+            'remove_featured_image' => __('Remove cover image', 'cari-prop-shop'),
+            'use_featured_image'    => __('Use as cover image', 'cari-prop-shop'),
+        );
+
+        $args = array(
+            'label'               => __('Neighborhood', 'cari-prop-shop'),
+            'description'          => __('Areas and neighborhoods guide', 'cari-prop-shop'),
+            'labels'              => $labels,
+            'supports'            => array('title', 'editor', 'thumbnail', 'excerpt', 'custom-fields'),
+            'hierarchical'        => false,
+            'public'              => true,
+            'show_ui'             => true,
+            'show_in_menu'        => true,
+            'menu_position'       => 10,
+            'menu_icon'           => 'dashicons-location',
+            'show_in_admin_bar'   => true,
+            'show_in_nav_menus'   => true,
+            'can_export'          => true,
+            'has_archive'         => true,
+            'exclude_from_search' => false,
+            'publicly_queryable'  => true,
+            'capability_type'     => 'post',
+            'show_in_rest'        => true,
+            'rewrite'             => array(
+                'slug'       => 'neighborhood',
+                'with_front' => true,
+            ),
+        );
+
+        register_post_type('neighborhood', $args);
     }
 }

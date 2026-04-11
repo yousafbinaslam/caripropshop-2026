@@ -172,6 +172,20 @@ final class CariPropShop_Core {
             }
         }
         
+        if (is_singular('agent')) {
+            $custom_template = locate_template('single-agent.php');
+            if ($custom_template) {
+                return $custom_template;
+            }
+        }
+        
+        if (is_post_type_archive('agent')) {
+            $custom_template = locate_template('archive-agent.php');
+            if ($custom_template) {
+                return $custom_template;
+            }
+        }
+        
         return $template;
     }
 }

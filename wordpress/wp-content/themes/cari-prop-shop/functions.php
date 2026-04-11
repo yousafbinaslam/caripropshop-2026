@@ -482,3 +482,413 @@ add_filter('comment_form_default_fields', 'cps_comment_form_fields');
 
 // Demo Content Setup
 require_once get_template_directory() . '/demo-content/setup-page.php';
+
+// =============================================
+// MISSING HELPER FUNCTIONS
+// =============================================
+
+function cps_get_user_role($user_id = null) {
+    if (!$user_id) {
+        $user_id = get_current_user_id();
+    }
+    
+    if (!$user_id) {
+        return 'guest';
+    }
+    
+    $user = get_userdata($user_id);
+    if (!$user) {
+        return 'guest';
+    }
+    
+    if (in_array('administrator', $user->roles)) {
+        return 'administrator';
+    }
+    if (in_array('agent', $user->roles)) {
+        return 'agent';
+    }
+    if (in_array('editor', $user->roles)) {
+        return 'editor';
+    }
+    
+    return 'subscriber';
+}
+
+function cps_get_package_features($package = null) {
+    $packages = array(
+        'basic' => array(
+            'name' => 'Basic',
+            'listings' => 5,
+            'featured' => 0,
+            'duration' => 30,
+            'price' => 500000
+        ),
+        'professional' => array(
+            'name' => 'Professional',
+            'listings' => 20,
+            'featured' => 5,
+            'duration' => 90,
+            'price' => 1500000
+        ),
+        'enterprise' => array(
+            'name' => 'Enterprise',
+            'listings' => -1,
+            'featured' => -1,
+            'duration' => 365,
+            'price' => 3000000
+        )
+    );
+    
+    if ($package && isset($packages[$package])) {
+        return $packages[$package];
+    }
+    
+    return $packages;
+}
+
+function cps_format_currency($amount, $currency = 'IDR') {
+    $symbols = array(
+        'IDR' => 'Rp',
+        'USD' => '$',
+        'EUR' => '€',
+        'SGD' => 'S$'
+    );
+    
+    $symbol = isset($symbols[$currency]) ? $symbols[$currency] : 'Rp';
+    
+    if ($currency === 'IDR') {
+        return $symbol . ' ' . number_format((float)$amount, 0, ',', '.');
+    }
+    
+    return $symbol . number_format((float)$amount, 2);
+}
+
+// =============================================
+// MISSING AJAX HANDLERS
+// =============================================
+
+add_action('wp_ajax_cps_request_callback', 'cps_handle_request_callback');
+add_action('wp_ajax_nopriv_cps_request_callback', 'cps_handle_request_callback');
+function cps_handle_request_callback() {
+    check_ajax_referer('cps_nonce', 'nonce');
+    
+    $name = sanitize_text_field($_POST['name'] ?? '');
+    $phone = sanitize_text_field($_POST['phone'] ?? '');
+    $topic = sanitize_text_field($_POST['topic'] ?? '');
+    
+    if (empty($name) || empty($phone)) {
+        wp_send_json_error(array('message' => __('Please fill in all required fields.', 'cari-prop-shop')));
+    }
+    
+    $post_id = wp_insert_post(array(
+        'post_type' => 'cps_callback',
+        'post_title' => sprintf(__('Callback Request from %s', 'cari-prop-shop'), $name),
+        'post_status' => 'publish',
+        'meta_input' => array(
+            'cps_name' => $name,
+            'cps_phone' => $phone,
+            'cps_topic' => $topic,
+            'cps_status' => 'pending',
+            'cps_date' => current_time('mysql')
+        )
+    ));
+    
+    if ($post_id) {
+        $admin_email = get_option('admin_email');
+        $subject = sprintf(__('[CariPropShop] Callback Request from %s', 'cari-prop-shop'), $name);
+        $message = sprintf(
+            __("Name: %s\nPhone: %s\nTopic: %s\nDate: %s", 'cari-prop-shop'),
+            $name, $phone, $topic, current_time('Y-m-d H:i:s')
+        );
+        
+        wp_mail($admin_email, $subject, $message);
+        
+        wp_send_json_success(array('message' => __('Thank you! We will call you back shortly.', 'cari-prop-shop')));
+    } else {
+        wp_send_json_error(array('message' => __('Error processing request. Please try again.', 'cari-prop-shop')));
+    }
+}
+
+add_action('wp_ajax_cps_schedule_tour', 'cps_handle_schedule_tour');
+add_action('wp_ajax_nopriv_cps_schedule_tour', 'cps_handle_schedule_tour');
+function cps_handle_schedule_tour() {
+    check_ajax_referer('cps_nonce', 'nonce');
+    
+    $property_id = intval($_POST['property_id'] ?? 0);
+    $name = sanitize_text_field($_POST['name'] ?? '');
+    $email = sanitize_email($_POST['email'] ?? '');
+    $phone = sanitize_text_field($_POST['phone'] ?? '');
+    $tour_date = sanitize_text_field($_POST['tour_date'] ?? '');
+    $tour_time = sanitize_text_field($_POST['tour_time'] ?? '');
+    $message = sanitize_textarea_field($_POST['message'] ?? '');
+    
+    if (empty($property_id) || empty($name) || empty($email) || empty($tour_date) || empty($tour_time)) {
+        wp_send_json_error(array('message' => __('Please fill in all required fields.', 'cari-prop-shop')));
+    }
+    
+    $post_id = wp_insert_post(array(
+        'post_type' => 'cps_tour',
+        'post_title' => sprintf(__('Tour Request: %s', 'cari-prop-shop'), get_the_title($property_id)),
+        'post_status' => 'publish',
+        'meta_input' => array(
+            'cps_property_id' => $property_id,
+            'cps_name' => $name,
+            'cps_email' => $email,
+            'cps_phone' => $phone,
+            'cps_tour_date' => $tour_date,
+            'cps_tour_time' => $tour_time,
+            'cps_message' => $message,
+            'cps_status' => 'pending',
+            'cps_date' => current_time('mysql')
+        )
+    ));
+    
+    if ($post_id) {
+        $admin_email = get_option('admin_email');
+        $property_title = get_the_title($property_id);
+        
+        $subject = sprintf(__('[CariPropShop] Tour Request for %s', 'cari-prop-shop'), $property_title);
+        $message = sprintf(
+            __("Property: %s\nName: %s\nEmail: %s\nPhone: %s\nDate: %s\nTime: %s\nMessage: %s", 'cari-prop-shop'),
+            $property_title, $name, $email, $phone, $tour_date, $tour_time, $message
+        );
+        
+        wp_mail($admin_email, $subject, $message);
+        
+        wp_send_json_success(array('message' => __('Tour scheduled successfully! We will contact you to confirm.', 'cari-prop-shop')));
+    } else {
+        wp_send_json_error(array('message' => __('Error scheduling tour. Please try again.', 'cari-prop-shop')));
+    }
+}
+
+add_action('wp_ajax_cps_save_property', 'cps_handle_save_property');
+function cps_handle_save_property() {
+    if (!is_user_logged_in()) {
+        wp_send_json_error(array('message' => __('Please login to add properties.', 'cari-prop-shop'), 'require_login' => true));
+    }
+    
+    check_ajax_referer('cps_nonce', 'nonce');
+    
+    $user_id = get_current_user_id();
+    $user_package = get_user_meta($user_id, 'cps_package', true) ?: 'basic';
+    $package_features = cps_get_package_features($user_package);
+    
+    $user_properties = count(get_posts(array(
+        'post_type' => 'property',
+        'author' => $user_id,
+        'posts_per_page' => -1,
+        'post_status' => array('publish', 'pending', 'draft')
+    )));
+    
+    if ($package_features['listings'] > 0 && $user_properties >= $package_features['listings']) {
+        wp_send_json_error(array('message' => __('You have reached your listing limit. Please upgrade your package.', 'cari-prop-shop')));
+    }
+    
+    $title = sanitize_text_field($_POST['post_title'] ?? '');
+    $content = wp_kses_post($_POST['post_content'] ?? '');
+    $status = sanitize_text_field($_POST['cps_status'] ?? 'pending');
+    $price = floatval($_POST['cps_price'] ?? 0);
+    
+    $post_data = array(
+        'post_type' => 'property',
+        'post_title' => $title,
+        'post_content' => $content,
+        'post_status' => current_user_can('publish_posts') ? $status : 'pending',
+        'post_author' => $user_id
+    );
+    
+    $post_id = wp_insert_post($post_data);
+    
+    if ($post_id && !is_wp_error($post_id)) {
+        if (isset($_POST['cps_status'])) {
+            update_post_meta($post_id, 'cps_status', sanitize_text_field($_POST['cps_status']));
+        }
+        if (isset($_POST['cps_price'])) {
+            update_post_meta($post_id, 'cps_price', floatval($_POST['cps_price']));
+        }
+        if (isset($_POST['cps_address'])) {
+            update_post_meta($post_id, 'cps_address', sanitize_text_field($_POST['cps_address']));
+        }
+        if (isset($_POST['cps_city'])) {
+            update_post_meta($post_id, 'cps_city', sanitize_text_field($_POST['cps_city']));
+        }
+        if (isset($_POST['cps_bedrooms'])) {
+            update_post_meta($post_id, 'cps_bedrooms', intval($_POST['cps_bedrooms']));
+        }
+        if (isset($_POST['cps_bathrooms'])) {
+            update_post_meta($post_id, 'cps_bathrooms', intval($_POST['cps_bathrooms']));
+        }
+        if (isset($_POST['cps_area'])) {
+            update_post_meta($post_id, 'cps_area', intval($_POST['cps_area']));
+        }
+        if (isset($_POST['cps_land_area'])) {
+            update_post_meta($post_id, 'cps_land_area', intval($_POST['cps_land_area']));
+        }
+        if (isset($_POST['cps_garage'])) {
+            update_post_meta($post_id, 'cps_garage', intval($_POST['cps_garage']));
+        }
+        if (isset($_POST['cps_year_built'])) {
+            update_post_meta($post_id, 'cps_year_built', intval($_POST['cps_year_built']));
+        }
+        if (isset($_POST['cps_agent'])) {
+            update_post_meta($post_id, 'cps_agent', intval($_POST['cps_agent']));
+        }
+        
+        if (isset($_POST['property_type']) && !empty($_POST['property_type'])) {
+            wp_set_object_terms($post_id, sanitize_text_field($_POST['property_type']), 'property_type');
+        }
+        
+        wp_send_json_success(array(
+            'message' => __('Property saved successfully!', 'cari-prop-shop'),
+            'redirect' => get_permalink($post_id)
+        ));
+    } else {
+        wp_send_json_error(array('message' => __('Error saving property. Please try again.', 'cari-prop-shop')));
+    }
+}
+
+add_action('wp_ajax_cps_submit_contact', 'cps_handle_submit_contact');
+add_action('wp_ajax_nopriv_cps_submit_contact', 'cps_handle_submit_contact');
+function cps_handle_submit_contact() {
+    check_ajax_referer('cps_nonce', 'nonce');
+    
+    $first_name = sanitize_text_field($_POST['first_name'] ?? '');
+    $last_name = sanitize_text_field($_POST['last_name'] ?? '');
+    $email = sanitize_email($_POST['email'] ?? '');
+    $phone = sanitize_text_field($_POST['phone'] ?? '');
+    $subject = sanitize_text_field($_POST['subject'] ?? '');
+    $message = sanitize_textarea_field($_POST['message'] ?? '');
+    $property_id = intval($_POST['property_id'] ?? 0);
+    
+    if (empty($first_name) || empty($email) || empty($message)) {
+        wp_send_json_error(array('message' => __('Please fill in all required fields.', 'cari-prop-shop')));
+    }
+    
+    $post_id = wp_insert_post(array(
+        'post_type' => 'cps_inquiry',
+        'post_title' => sprintf(__('Contact from %s %s', 'cari-prop-shop'), $first_name, $last_name),
+        'post_status' => 'publish',
+        'meta_input' => array(
+            'cps_first_name' => $first_name,
+            'cps_last_name' => $last_name,
+            'cps_email' => $email,
+            'cps_phone' => $phone,
+            'cps_subject' => $subject,
+            'cps_message' => $message,
+            'cps_property_id' => $property_id,
+            'cps_status' => 'new',
+            'cps_date' => current_time('mysql')
+        )
+    ));
+    
+    if ($post_id) {
+        $admin_email = get_option('admin_email');
+        $subject_line = $subject ?: sprintf(__('New Contact from %s', 'cari-prop-shop'), $first_name);
+        
+        $message_body = sprintf(
+            __("Name: %s %s\nEmail: %s\nPhone: %s\nSubject: %s\nMessage: %s", 'cari-prop-shop'),
+            $first_name, $last_name, $email, $phone, $subject_line, $message
+        );
+        
+        if ($property_id) {
+            $message_body .= sprintf(__("\n\nProperty: %s\nLink: %s", 'cari-prop-shop'), get_the_title($property_id), get_permalink($property_id));
+        }
+        
+        wp_mail($admin_email, '[CariPropShop] ' . $subject_line, $message_body);
+        
+        if (isset($_POST['newsletter']) && $_POST['newsletter']) {
+            $existing = get_posts(array(
+                'post_type' => 'cps_subscriber',
+                'meta_query' => array(array('key' => 'cps_email', 'value' => $email))
+            ));
+            if (empty($existing)) {
+                wp_insert_post(array(
+                    'post_type' => 'cps_subscriber',
+                    'post_title' => $email,
+                    'post_status' => 'publish',
+                    'meta_input' => array('cps_email' => $email, 'cps_subscribed' => current_time('mysql'))
+                ));
+            }
+        }
+        
+        wp_send_json_success(array('message' => __('Thank you for your message! We will get back to you soon.', 'cari-prop-shop')));
+    } else {
+        wp_send_json_error(array('message' => __('Error sending message. Please try again.', 'cari-prop-shop')));
+    }
+}
+
+add_action('wp_ajax_cps_delete_saved_search', 'cps_handle_delete_saved_search');
+function cps_handle_delete_saved_search() {
+    check_ajax_referer('cps_nonce', 'nonce');
+    
+    $index = intval($_POST['index'] ?? -1);
+    $user_id = get_current_user_id();
+    
+    if ($index < 0) {
+        wp_send_json_error(array('message' => __('Invalid search index.', 'cari-prop-shop')));
+    }
+    
+    $saved_searches = get_user_meta($user_id, 'cps_saved_searches', true) ?: array();
+    
+    if (isset($saved_searches[$index])) {
+        unset($saved_searches[$index]);
+        $saved_searches = array_values($saved_searches);
+        update_user_meta($user_id, 'cps_saved_searches', $saved_searches);
+        wp_send_json_success(array('message' => __('Saved search deleted.', 'cari-prop-shop')));
+    } else {
+        wp_send_json_error(array('message' => __('Saved search not found.', 'cari-prop-shop')));
+    }
+}
+
+add_action('wp_ajax_cps_update_profile', 'cps_handle_update_profile');
+function cps_handle_update_profile() {
+    if (!is_user_logged_in()) {
+        wp_send_json_error(array('message' => __('Please login to update profile.', 'cari-prop-shop')));
+    }
+    
+    check_ajax_referer('cps_nonce', 'nonce');
+    
+    $user_id = get_current_user_id();
+    parse_str($_POST['data'], $data);
+    
+    $userdata = array('ID' => $user_id);
+    
+    if (isset($data['first_name'])) {
+        $userdata['first_name'] = sanitize_text_field($data['first_name']);
+    }
+    if (isset($data['last_name'])) {
+        $userdata['last_name'] = sanitize_text_field($data['last_name']);
+    }
+    if (isset($data['display_name'])) {
+        $userdata['display_name'] = sanitize_text_field($data['display_name']);
+    }
+    if (isset($data['email'])) {
+        $userdata['user_email'] = sanitize_email($data['email']);
+    }
+    
+    $result = wp_update_user($userdata);
+    
+    if (is_wp_error($result)) {
+        wp_send_json_error(array('message' => $result->get_error_message()));
+    }
+    
+    if (isset($data['cps_phone'])) {
+        update_user_meta($user_id, 'cps_phone', sanitize_text_field($data['cps_phone']));
+    }
+    if (isset($data['cps_whatsapp'])) {
+        update_user_meta($user_id, 'cps_whatsapp', sanitize_text_field($data['cps_whatsapp']));
+    }
+    if (isset($data['cps_bio'])) {
+        update_user_meta($user_id, 'cps_bio', sanitize_textarea_field($data['cps_bio']));
+    }
+    
+    if (!empty($data['new_password']) && !empty($data['confirm_password'])) {
+        if ($data['new_password'] === $data['confirm_password']) {
+            wp_set_password($data['new_password'], $user_id);
+        } else {
+            wp_send_json_error(array('message' => __('Passwords do not match.', 'cari-prop-shop')));
+        }
+    }
+    
+    wp_send_json_success(array('message' => __('Profile updated successfully!', 'cari-prop-shop')));
+}
